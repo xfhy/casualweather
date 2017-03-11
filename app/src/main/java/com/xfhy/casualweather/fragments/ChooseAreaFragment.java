@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.xfhy.casualweather.R;
+import com.xfhy.casualweather.WeatherActivity;
 import com.xfhy.casualweather.adapter.ProvinceCityAdapter;
 import com.xfhy.casualweather.bean.City;
 import com.xfhy.casualweather.bean.County;
@@ -146,8 +147,8 @@ public class ChooseAreaFragment extends Fragment {
     private void queryProvinces() {
         titleText.setText("中国");
         backButton.setVisibility(View.GONE);
-        provinceList = DataSupport.findAll(Province.class);
-        if (provinceList.size() > 0) {
+        provinceList = DataSupport.findAll(Province.class);    //查询province表的全部内容
+        if (provinceList.size() > 0) {    //将省份名称全部封装到一个集合中
             dataList.clear();
             for (Province province : provinceList) {
                 dataList.add(province.getProvinceName());
@@ -308,8 +309,12 @@ public class ChooseAreaFragment extends Fragment {
             //如果点击的是县区
             int countyPosition = intent.getIntExtra("county_position", -1);
             if(countyPosition != -1){
-                String countyName = countyList.get(countyPosition).getCountyName();
-                Toast.makeText(context, countyName, Toast.LENGTH_SHORT).show();
+                //获取到点击的县区的索引   然后获取到该县区的id   打开显示天气详情的Activity
+                String weatherId = countyList.get(countyPosition).getWeatherId();
+                Intent intent1 = new Intent(getContext(), WeatherActivity.class);
+                intent1.putExtra("weather_id",weatherId);
+                startActivity(intent1);
+                getActivity().finish();
             }
 
         }

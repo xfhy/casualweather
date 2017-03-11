@@ -72,7 +72,7 @@ public class ProvinceCityAdapter extends
                     intent.putExtra("city_position", adapterPosition);   //当前点击的城市位置
                     intent.putExtra("query_county", true);
                 } else if(currentLevel == ChooseAreaFragment.LEVEL_COUNTY){
-                    intent.putExtra("county_position", adapterPosition);   //当前点击的城市位置
+                    intent.putExtra("county_position", adapterPosition);   //当前点击的县区位置
                     Log.i(TAG, "onClick: "+adapterPosition);
                 }
                 localBroadcastManager.sendBroadcast(intent);   //发送本地广播   通知fragment该刷新了
