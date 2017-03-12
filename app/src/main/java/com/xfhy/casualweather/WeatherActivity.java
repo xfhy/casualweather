@@ -1,8 +1,13 @@
 package com.xfhy.casualweather;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +30,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.xfhy.casualweather.bean.json.Forecast;
 import com.xfhy.casualweather.bean.json.Weather;
+import com.xfhy.casualweather.service.AutoUpdateService;
 import com.xfhy.casualweather.util.HttpUtil;
 import com.xfhy.casualweather.util.LogUtil;
 import com.xfhy.casualweather.util.Utility;
@@ -118,11 +124,17 @@ public class WeatherActivity extends AppCompatActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
+
+        ConnectivityManager connectionManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectionManager.getActiveNetworkInfo();
+        if(networkInfo == null || networkInfo.isAvailable()){
+            Toast.makeText(this, "没有网络哦,亲", Toast.LENGTH_SHORT).show();
+        }
 
         //状态栏沉浸式效果    下面的方法只适合Android 5.0 以上系统
         if (Build.VERSION.SDK_INT >= 21) {
@@ -185,8 +197,8 @@ public class WeatherActivity extends AppCompatActivity {
         } else {
             loadBingPic();
         }
-
     }
+
 
     /**
      * 加载必应每日一图
@@ -255,6 +267,11 @@ public class WeatherActivity extends AppCompatActivity {
      * 处理并展示Weather实体类中的数据。
      */
     private void showWeatherInfo(Weather weather) {
+        //启动后台自动更新服务
+        weatherLayout.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
+
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
         String degree = weather.now.temperature + "℃";
@@ -287,5 +304,11 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //unregisterReceiver(networkChangeReceiver);   //取消注册广播
     }
 }

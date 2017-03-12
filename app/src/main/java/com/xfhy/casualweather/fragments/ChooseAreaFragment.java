@@ -155,8 +155,8 @@ public class ChooseAreaFragment extends Fragment {
                 dataList.add(province.getProvinceName());
             }
             adapter.setDataList(dataList);     //设置需要显示的数据
-            adapter.notifyDataSetChanged();   //通知数据已更新
-            recyclerView.scrollToPosition(0);
+            adapter.notifyDataSetChanged();    //通知数据已更新
+            recyclerView.scrollToPosition(0);  //移动到第一项
             currentLevel = LEVEL_PROVINCE;
             adapter.setCurrentLevel(LEVEL_PROVINCE);   //设置当前等级是省的那个等级
         } else {
