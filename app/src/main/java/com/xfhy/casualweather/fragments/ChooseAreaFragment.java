@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.xfhy.casualweather.MainActivity;
 import com.xfhy.casualweather.R;
 import com.xfhy.casualweather.WeatherActivity;
 import com.xfhy.casualweather.adapter.ProvinceCityAdapter;
@@ -155,7 +156,7 @@ public class ChooseAreaFragment extends Fragment {
             }
             adapter.setDataList(dataList);     //设置需要显示的数据
             adapter.notifyDataSetChanged();   //通知数据已更新
-            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView,null,0);
+            recyclerView.scrollToPosition(0);
             currentLevel = LEVEL_PROVINCE;
             adapter.setCurrentLevel(LEVEL_PROVINCE);   //设置当前等级是省的那个等级
         } else {
@@ -244,6 +245,7 @@ public class ChooseAreaFragment extends Fragment {
             }
             adapter.setDataList(dataList);
             adapter.notifyDataSetChanged();
+            recyclerView.scrollToPosition(0);
             currentLevel = LEVEL_CITY;
             adapter.setCurrentLevel(LEVEL_CITY);
         } else {
@@ -269,6 +271,7 @@ public class ChooseAreaFragment extends Fragment {
             }
             adapter.setDataList(dataList);    //设置数据
             adapter.notifyDataSetChanged();   //通知更新
+            recyclerView.scrollToPosition(0);
             currentLevel = LEVEL_COUNTY;      //更新级别
             adapter.setCurrentLevel(LEVEL_COUNTY);
         } else {
@@ -311,10 +314,22 @@ public class ChooseAreaFragment extends Fragment {
             if(countyPosition != -1){
                 //获取到点击的县区的索引   然后获取到该县区的id   打开显示天气详情的Activity
                 String weatherId = countyList.get(countyPosition).getWeatherId();
-                Intent intent1 = new Intent(getContext(), WeatherActivity.class);
-                intent1.putExtra("weather_id",weatherId);
-                startActivity(intent1);
-                getActivity().finish();
+
+                //如果是主界面的选择界面   则直接跳转到显示天气的界面
+                if(getActivity() instanceof MainActivity){
+                    Intent intent1 = new Intent(getContext(), WeatherActivity.class);
+                    intent1.putExtra("weather_id",weatherId);
+                    startActivity(intent1);
+                    getActivity().finish();
+                } else if(getActivity() instanceof WeatherActivity){
+                    //如果是在里面进行切换,则直接加载那个区域的天气进行显示
+                    WeatherActivity activity = (WeatherActivity) getActivity();
+                    activity.drawerLayout.closeDrawers();
+                    activity.swipeRefresh.setRefreshing(true);
+                    activity.requestWeather(weatherId);
+                }
+
+
             }
 
         }

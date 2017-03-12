@@ -5,6 +5,16 @@
 
     <!--头布局-->
 
+    <!--切换城市-->
+    <Button
+        android:id="@+id/nav_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/ic_home"/>
+
     <!--显示城市名-->
     <TextView
         android:id="@+id/title_city"
